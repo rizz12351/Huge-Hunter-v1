@@ -8,7 +8,7 @@ gui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 400, 0, 250)
 frame.Position = UDim2.new(0.5, -200, 0.5, -125)
-frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40) -- Dark gray
+frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 frame.BorderSizePixel = 0
 frame.Active = true
 frame.Draggable = true
@@ -19,7 +19,7 @@ corner.CornerRadius = UDim.new(0, 20)
 corner.Parent = frame
 
 local stroke = Instance.new("UIStroke")
-stroke.Color = Color3.fromRGB(0, 200, 255) -- Neon blue border
+stroke.Color = Color3.fromRGB(0, 200, 255)
 stroke.Thickness = 2
 stroke.Parent = frame
 
@@ -39,7 +39,7 @@ local button = Instance.new("TextButton")
 button.Text = "Execute"
 button.Size = UDim2.new(0.6, 0, 0, 50)
 button.Position = UDim2.new(0.2, 0, 0.5, -25)
-button.BackgroundColor3 = Color3.fromRGB(0, 200, 255) -- Neon blue
+button.BackgroundColor3 = Color3.fromRGB(0, 200, 255)
 button.TextColor3 = Color3.fromRGB(255, 255, 255)
 button.Font = Enum.Font.SourceSansBold
 button.TextScaled = true
@@ -75,10 +75,34 @@ local closeCorner = Instance.new("UICorner")
 closeCorner.CornerRadius = UDim.new(0, 8)
 closeCorner.Parent = closeBtn
 
--- Functionality
+-- Status Label (Feedback when executing)
+local statusLabel = Instance.new("TextLabel")
+statusLabel.Text = ""
+statusLabel.Size = UDim2.new(1, 0, 0, 30)
+statusLabel.Position = UDim2.new(0, 0, 0.75, 10)
+statusLabel.BackgroundTransparency = 1
+statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+statusLabel.Font = Enum.Font.SourceSansItalic
+statusLabel.TextSize = 16
+statusLabel.Parent = frame
+
+-- Button Functionality
 button.MouseButton1Click:Connect(function()
-    pcall(function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Petsimscripts-25/Petsimscript1/refs/heads/main/Script", true))()
+    statusLabel.Text = "Executing..."
+    local success, result = pcall(function()
+        return loadstring(game:HttpGet("https://raw.githubusercontent.com/Petsimscripts-25/Petsimscript1/refs/heads/main/Script", true))()
+    end)
+
+    if success then
+        statusLabel.Text = "Script executed!"
+    else
+        statusLabel.Text = "Execution failed."
+        warn("Script failed to execute:", result)
+    end
+
+    -- Clear status after a short delay
+    task.delay(2, function()
+        statusLabel.Text = ""
     end)
 end)
 
